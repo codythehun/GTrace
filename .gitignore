@@ -1,0 +1,7 @@
+[Dd]ebug*/
+[Rr]elease*/
+*.ilk
+*.ncb
+*.bmp
+ipch/*
+*.sdf

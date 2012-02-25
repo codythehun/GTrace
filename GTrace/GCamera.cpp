@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "GCamera.h"
-#include "Eigen/core"
-#include "Eigen/geometry"
+#include "GRay.h"
+
+#include <Eigen/core>
+#include <Eigen/geometry>
 
 const float ANG2RAD = 2 * M_PI / 360.0;
 const float RAD2ANG = 360 / (2 * M_PI);
@@ -15,6 +17,7 @@ namespace gtrace
 	{
 		SetImageDimensions(img_width, img_height);
 		CalculateFrustum();
+		m_position = Vector3f::Zero();
 	}
 
 	void GCamera::SetImageDimensions(unsigned int img_width, unsigned int img_height)
@@ -32,6 +35,11 @@ namespace gtrace
 		CalculateFrustum();
 	}
 
+	void GCamera::SetPosition(Eigen::Vector3f position)
+	{
+		m_position = position;
+	}
+
 	void GCamera::SetOrientation(float pitch, float yaw, float roll)
 	{
 		m_pitch = pitch;
@@ -41,10 +49,11 @@ namespace gtrace
 	}
 
 
-	Vector3f GCamera::GetRayForPosition(unsigned int x, unsigned int y) const
+	GRay GCamera::GetRayForPosition(unsigned int x, unsigned int y) const
 	{
-		Vector3f res = m_frustum[0] + m_horizontal_step * x + m_vertical_step * y;
-		res.normalize();
+		Vector3f direction = m_frustum[0] + m_horizontal_step * x + m_vertical_step * y;
+		direction.normalize();
+		GRay res(m_position, direction);
 		return res;
 	}
 

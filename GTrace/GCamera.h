@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Eigen/core>
-
+#include "GRay.h"
 namespace gtrace 
 {
 
@@ -15,8 +15,9 @@ namespace gtrace
 			void SetFieldOfView(float fov);
 			//void SetOrientation(Eigen::Vector3f direction, float roll = 0.0f);
 			void SetOrientation(float pitch, float yaw, float roll);
+			void SetPosition(Eigen::Vector3f position);
 
-			Eigen::Vector3f GetRayForPosition(unsigned int x, unsigned int y) const;
+			GRay GetRayForPosition(unsigned int x, unsigned int y) const;
 
 		protected:
 			void CalculateFrustum();
@@ -29,6 +30,7 @@ namespace gtrace
 
 			// orinetation
 			float m_pitch, m_yaw, m_roll;
+			Eigen::Vector3f m_position;
 
 			// frustum
 			Eigen::Vector3f m_frustum[4]; // topleft, topright, bottomleft, bottomright

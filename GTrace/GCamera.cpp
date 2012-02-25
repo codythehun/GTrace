@@ -43,15 +43,9 @@ namespace gtrace
 
 	Vector3f GCamera::GetRayForPosition(unsigned int x, unsigned int y) const
 	{
-		float cx = (float)x / m_img_width;
-		float cy = (float)y / m_img_height;
-
-		Vector3f v1 = m_frustum[1] * cx + m_frustum[0] * (1.0f - cx);
-		Vector3f v2 = m_frustum[3] * cx + m_frustum[2] * (1.0f - cx);
-		Vector3f res = v2 * cy + v1 * (1.0f - cy);
+		Vector3f res = m_frustum[0] + m_horizontal_step * x + m_vertical_step * y;
 		res.normalize();
 		return res;
-
 	}
 
 	void GCamera::CalculateFrustum()
@@ -81,7 +75,15 @@ namespace gtrace
 		m = AngleAxisf(-x, Vector3f::UnitX())*  
 			AngleAxisf(-y, Vector3f::UnitY()) * rot;
 		m_frustum[3] = Vector3f::UnitZ().transpose() * m;
+
+		CalculateStepVectors();
 		
+	}
+
+	void GCamera::CalculateStepVectors()
+	{
+		m_horizontal_step = (m_frustum[1] - m_frustum[0]) / (float) m_img_width;
+		m_vertical_step = (m_frustum[2] - m_frustum[0]) / (float) m_img_height;
 	}
 
 }

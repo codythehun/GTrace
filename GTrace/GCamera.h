@@ -20,6 +20,7 @@ namespace gtrace
 
 		protected:
 			void CalculateFrustum();
+			void CalculateStepVectors();
 
 			//viewport
 			unsigned int m_img_width;
@@ -31,6 +32,8 @@ namespace gtrace
 
 			// frustum
 			Eigen::Vector3f m_frustum[4]; // topleft, topright, bottomleft, bottomright
+			Eigen::Vector3f m_horizontal_step; // stepping accross screen horizontally
+			Eigen::Vector3f m_vertical_step; // stepping accross screen vertically
 
 			
 

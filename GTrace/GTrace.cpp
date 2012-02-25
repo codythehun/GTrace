@@ -5,6 +5,8 @@
 #include <CImg/CImg.h>
 #include "GCamera.h"
 #include "Eigen/core"
+#include "windows.h"
+#include <iostream>
 
 using namespace cimg_library;
 using namespace gtrace;
@@ -16,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GCamera cam;
 	unsigned int col[3];
 	cam.SetOrientation(45, 0, 90);
-
+	long time = GetTickCount64();
 	for(unsigned int x = 0; x < 640; ++x)
 	{
 		for(unsigned int y =0; y < 480; ++y)
@@ -27,6 +29,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			render_buffer.draw_point(x, y, col);
 		}
 	}
+	time = GetTickCount64() - time;
+	std::cout << "Render time: " << time << " ms";
 	render_buffer.save_bmp("render.bmp");
 
 	

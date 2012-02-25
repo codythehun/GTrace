@@ -36,6 +36,9 @@
     <ClInclude Include="GRay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GSphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

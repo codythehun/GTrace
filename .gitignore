@@ -5,3 +5,4 @@
 *.bmp
 ipch/*
 *.sdf
+GTrace.opensdf

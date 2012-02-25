@@ -59,20 +59,27 @@ namespace gtrace
 		Matrix3f m;
 		float x = m_vfov/2.0f * ANG2RAD;
 		float y = m_hfov/2.0f * ANG2RAD;
+		// calculating rotation matrix based on pitch yaw roll
+		Matrix3f rot;
+		rot =	AngleAxisf(m_roll * ANG2RAD, Vector3f::UnitZ()) *
+				AngleAxisf(m_pitch * ANG2RAD, Vector3f::UnitX()) *
+				AngleAxisf(m_yaw * ANG2RAD, Vector3f::UnitY());
+
+		// calculating frustum vecs
 		m = AngleAxisf(x, Vector3f::UnitX())*  
-			AngleAxisf(y, Vector3f::UnitY());
+			AngleAxisf(y, Vector3f::UnitY()) * rot;
 		m_frustum[0] = Vector3f::UnitZ().transpose() * m;
 
 		m = AngleAxisf(x, Vector3f::UnitX())*  
-			AngleAxisf(-y, Vector3f::UnitY());
+			AngleAxisf(-y, Vector3f::UnitY()) * rot;
 		m_frustum[1] = Vector3f::UnitZ().transpose() * m;
 
 		m = AngleAxisf(-x, Vector3f::UnitX())*  
-			AngleAxisf(y, Vector3f::UnitY());
+			AngleAxisf(y, Vector3f::UnitY()) * rot;
 		m_frustum[2] = Vector3f::UnitZ().transpose() * m;
 
 		m = AngleAxisf(-x, Vector3f::UnitX())*  
-			AngleAxisf(-y, Vector3f::UnitY());
+			AngleAxisf(-y, Vector3f::UnitY()) * rot;
 		m_frustum[3] = Vector3f::UnitZ().transpose() * m;
 		
 	}

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <Eigen/core>
-#include "GRay.h"
+#include "GGeometry.h"
 
 namespace gtrace 
 {
+namespace geometry
+{
 
-	class GPlane 
+	class GPlane : public GBody
 	{
 		public:
 			GPlane();
@@ -14,10 +16,13 @@ namespace gtrace
 			GPlane(Eigen::Vector3f normal, float dist);
 
 			bool Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const;
+			bool Intersect(const GRay& ray, float& distance) const;
+			bool Intersect(const GRay& ray) const;
 
 		private:
 			Eigen::Vector3f m_normal;
 			float m_dist;
 
 	};
+}
 }

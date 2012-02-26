@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "GRay.h"
+#include "GGeometry.h"
 #include "GSphere.h"
 #include <Eigen/core>
 
@@ -8,12 +8,14 @@ using namespace Eigen;
 
 namespace gtrace
 {
+namespace geometry
+{
 
 	GSphere::GSphere(): m_radius(1), m_position(Vector3f::Zero()) {}
 
 	GSphere::GSphere(Vector3f position, float radius): m_position(position), m_radius(radius) {}
 
-	bool GSphere::Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const
+	bool GSphere::Intersect(const GRay& ray, float& distance, Vector3f& normal) const
 	{
 		float x1, x2; // x is the unknown: distance to travel along ray to hit sphere
 		// equation: ||ray.m_origin + x * ray.m_direction - m_position || = m_radius
@@ -37,4 +39,18 @@ namespace gtrace
 		return true;
 	}
 
+	// lame implementation, should refactor not to calculate normal !!
+	bool GSphere::Intersect(const GRay& ray, float& distance) const
+	{
+		Vector3f tmp;
+		return Intersect(ray, distance, tmp);
+	}
+
+	bool GSphere::Intersect(const GRay& ray) const
+	{
+		float tmp;
+		return Intersect(ray, tmp);
+	}
+
+}
 }

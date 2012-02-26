@@ -33,10 +33,10 @@
     <ClInclude Include="GPLane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GRay.h">
+    <ClInclude Include="GSphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GSphere.h">
+    <ClInclude Include="GGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,13 +50,13 @@
     <ClCompile Include="GCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GRay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GGeometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

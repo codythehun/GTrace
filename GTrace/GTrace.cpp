@@ -12,10 +12,11 @@
 
 using namespace cimg_library;
 using namespace gtrace;
+using namespace gtrace::geometry;
 using namespace Eigen;
 
-const unsigned int RESOLUTION_X = 1680;
-const unsigned int RESOLUTION_Y = 1050;
+const unsigned int RESOLUTION_X = 1280;
+const unsigned int RESOLUTION_Y = 720;
 int _tmain(int argc, _TCHAR* argv[])
 {
 	CImg<unsigned char> render_buffer(RESOLUTION_X, RESOLUTION_Y, 1, 3);

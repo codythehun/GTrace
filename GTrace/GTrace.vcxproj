@@ -79,16 +79,16 @@
   <ItemGroup>
     <ClInclude Include="GCamera.h" />
     <ClInclude Include="GConstDefs.h" />
+    <ClInclude Include="GGeometry.h" />
     <ClInclude Include="GPLane.h" />
-    <ClInclude Include="GRay.h" />
     <ClInclude Include="GSphere.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GCamera.cpp" />
+    <ClCompile Include="GGeometry.cpp" />
     <ClCompile Include="GPlane.cpp" />
-    <ClCompile Include="GRay.cpp" />
     <ClCompile Include="GSphere.cpp" />
     <ClCompile Include="GTrace.cpp" />
     <ClCompile Include="stdafx.cpp">

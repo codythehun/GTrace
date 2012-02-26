@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Eigen/core>
-#include "GRay.h"
+#include "GGeometry.h"
+
 namespace gtrace 
 {
 
@@ -17,7 +18,7 @@ namespace gtrace
 			void SetOrientation(float pitch, float yaw, float roll);
 			void SetPosition(Eigen::Vector3f position);
 
-			GRay GetRayForPosition(unsigned int x, unsigned int y) const;
+			geometry::GRay GetRayForPosition(unsigned int x, unsigned int y) const;
 
 		protected:
 			void CalculateFrustum();

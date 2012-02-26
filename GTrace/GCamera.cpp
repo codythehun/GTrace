@@ -1,12 +1,10 @@
 #include "stdafx.h"
 #include "GCamera.h"
-#include "GRay.h"
+#include "GGeometry.h"
 
 #include <Eigen/core>
 #include <Eigen/geometry>
 
-const float ANG2RAD = 2 * M_PI / 360.0;
-const float RAD2ANG = 360 / (2 * M_PI);
 
 using namespace Eigen;
 
@@ -49,24 +47,24 @@ namespace gtrace
 	}
 
 
-	GRay GCamera::GetRayForPosition(unsigned int x, unsigned int y) const
+	geometry::GRay GCamera::GetRayForPosition(unsigned int x, unsigned int y) const
 	{
 		Vector3f direction = m_frustum[0] + m_horizontal_step * x + m_vertical_step * y;
 		direction.normalize();
-		GRay res(m_position, direction);
+		geometry::GRay res(m_position, direction);
 		return res;
 	}
 
 	void GCamera::CalculateFrustum()
 	{
 		Matrix3f m;
-		float x = m_vfov/2.0f * ANG2RAD;
-		float y = m_hfov/2.0f * ANG2RAD;
+		float x = geometry::Deg2Rad(m_vfov/2.0f);
+		float y = geometry::Deg2Rad(m_hfov/2.0f);
 		// calculating rotation matrix based on pitch yaw roll
 		Matrix3f rot;
-		rot =	AngleAxisf(m_roll * ANG2RAD, Vector3f::UnitZ()) *
-				AngleAxisf(m_pitch * ANG2RAD, Vector3f::UnitX()) *
-				AngleAxisf(m_yaw * ANG2RAD, Vector3f::UnitY());
+		rot =	AngleAxisf(geometry::Deg2Rad(m_roll), Vector3f::UnitZ()) *
+				AngleAxisf(geometry::Deg2Rad(m_pitch), Vector3f::UnitX()) *
+				AngleAxisf(geometry::Deg2Rad(m_yaw), Vector3f::UnitY());
 
 		// calculating frustum vecs
 		m = AngleAxisf(x, Vector3f::UnitX())*  

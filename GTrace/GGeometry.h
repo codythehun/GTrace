@@ -28,6 +28,19 @@ namespace geometry
 			virtual bool Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const = 0;
 			virtual bool Intersect(const GRay& ray, float& distance) const = 0;
 			virtual bool Intersect(const GRay& ray) const = 0;
+			// future ideas:
+
+			// -- Materials:
+			// should also be able to calculate texture coordinates for an intersection
+			// could return many texture coordinates, according to how many texture coordinate channels it has
+			// texture coordinate channels could have a texture coordinate unwrapper assigned to them, which calculates the coordinates
+			// based on the tex coordinates, the material of te object can be calculated
+			// material has different properties, which should have resolvers, which could return a constant value, or lookup in a texture based on a texture coordinate channel
+
+			// -- Lighting:
+			// Should also be able to return a random point on the surface, which will be good for monte carlo simulations (shadow rays, area lights etc)
+
+
 	};
 
 }

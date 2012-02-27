@@ -2,6 +2,7 @@
 
 #include <Eigen/core>
 #include <Eigen/geometry>
+#include "GMaterial.h"
 
 namespace gtrace
 {
@@ -9,6 +10,7 @@ namespace geometry
 {
 	float Deg2Rad(float degree);
 	float Rad2Deg(float radian);
+	float clamp(float value, float min=0.0f, float max=1.0f);
 	
 	class GRay
 	{
@@ -25,6 +27,8 @@ namespace geometry
 	class GBody
 	{
 		public:
+			material::GMaterial m_material; // gross...
+
 			virtual bool Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const = 0;
 			virtual bool Intersect(const GRay& ray, float& distance) const = 0;
 			virtual bool Intersect(const GRay& ray) const = 0;

@@ -9,6 +9,7 @@
 #include "Eigen/core"
 #include "windows.h"
 #include <iostream>
+#include "GRaytracer.h"
 
 using namespace cimg_library;
 using namespace gtrace;
@@ -17,46 +18,33 @@ using namespace Eigen;
 
 const unsigned int RESOLUTION_X = 1280;
 const unsigned int RESOLUTION_Y = 720;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	CImg<unsigned char> render_buffer(RESOLUTION_X, RESOLUTION_Y, 1, 3);
-	GCamera cam(RESOLUTION_X, RESOLUTION_Y);
-	unsigned int col[3];
-	cam.SetOrientation(-20, 0, 10);
-	GSphere sph(Vector3f(0, -0.9f, 2.0f), 0.4f);
-	Vector3f light_vec = -Vector3f::UnitY();
-	long time = GetTickCount64();
-	GPlane plane(Vector3f::UnitY(), -1.0f);
+	GCamera *cam = new GCamera(RESOLUTION_X, RESOLUTION_Y);
+	cam->SetOrientation(-20, 0, 10);
 
-	for(unsigned int x = 0; x < RESOLUTION_X; ++x)
-	{
-		for(unsigned int y =0; y < RESOLUTION_Y; ++y)
-		{
-			GRay ray = cam.GetRayForPosition(x, y);
-			float c = 0.0f; //(Vector3f::UnitZ().dot(ray) + 1.0f) / 2.0f;
-			
-			Vector3f normal1, normal2;
-			float distance1, distance2=0.0f;
-			bool plane_hit, sp_hit;
-			plane_hit = plane.Intersect(ray, distance1, normal1);
-			sp_hit = sph.Intersect(ray, distance2, normal2);
-			if (sp_hit)
-			{
-				c = ( - normal2.dot(light_vec) + 1.0f) /2.0f;
-			}
-			else if(plane_hit)
-			{
-				
-				c = 1.0f - distance1 / 5.0f;
-				if(c < 0.0f ) c= 0.0f;
-			}
-			col[0]=col[1]=col[2]=abs(c)*255;
-			render_buffer.draw_point(x, y, col);
-		}
-	}
-	time = GetTickCount64() - time;
+	GSphere* sph = new GSphere(Vector3f(0, -0.6f, 2.0f), 0.4f);
+	sph->m_material.m_ambient = Vector3f(0.2f, 0.0f, 0.0f);
+	sph->m_material.m_diffuse = Vector3f(1.0f, 0.0f, 0.0f);
+	sph->m_material.m_specular = Vector3f(0.8f, 0.8f, 0.8f);
+	sph->m_material.m_shininess = 4.0f;
+	
+	long time = GetTickCount();
+	GPlane* plane = new GPlane(Vector3f::UnitY(), -1.0f);
+	plane->m_material.m_ambient = Vector3f(0.1f, 0.1f, 0.1f);
+	plane->m_material.m_diffuse = Vector3f(0.3f, 0.3f, 0.3f);
+	plane->m_material.m_specular = Vector3f(0.2f, 0.2f, 0.2f);
+	plane->m_material.m_shininess = 1.0f;
+
+	GRaytracer tracer;
+	tracer.SetCamera(cam);
+	tracer.AddObject(plane);
+	tracer.AddObject(sph);
+	tracer.Render("render.bmp");
+	
+	time = GetTickCount() - time;
 	std::cout << "Render time: " << time << " ms";
-	render_buffer.save_bmp("render.bmp");
 
 	
 	return 0;

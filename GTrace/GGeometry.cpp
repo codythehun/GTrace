@@ -22,10 +22,12 @@ namespace geometry
 	{
 		return radian * RAD2DEG;
 	}
-	
 
-	const float ANG2RAD = 2 * M_PI / 360.0;
-	const float RAD2ANG = 360 / (2 * M_PI);
+	float clamp(float value, float min, float max)
+	{ 
+		return value < min ? min : (value > max ? max : value); 
+	}
+	
 
 	GRay::GRay(): m_origin(Vector3f::Zero()), m_direction(Vector3f::Zero()) {}
 

@@ -39,6 +39,12 @@
     <ClInclude Include="GGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GRaytracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GGeometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GRaytracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

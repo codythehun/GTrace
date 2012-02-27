@@ -20,6 +20,8 @@ namespace gtrace
 
 			geometry::GRay GetRayForPosition(unsigned int x, unsigned int y) const;
 
+			unsigned int GetImageWidth() const { return m_img_width; };
+			unsigned int GetImageHeight() const { return m_img_height; }; 
 		protected:
 			void CalculateFrustum();
 			void CalculateStepVectors();

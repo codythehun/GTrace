@@ -27,8 +27,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	GSphere* sph = new GSphere(Vector3f(0, -0.6f, 2.0f), 0.4f);
 	sph->m_material.m_ambient = Vector3f(0.2f, 0.0f, 0.0f);
 	sph->m_material.m_diffuse = Vector3f(1.0f, 0.0f, 0.0f);
-	sph->m_material.m_specular = Vector3f(0.8f, 0.8f, 0.8f);
-	sph->m_material.m_shininess = 4.0f;
+	sph->m_material.m_specular = Vector3f(0.5f, 0.5f, 0.5f);
+	sph->m_material.m_shininess = 0.5f;
 	
 	long time = GetTickCount();
 	GPlane* plane = new GPlane(Vector3f::UnitY(), -1.0f);
@@ -45,7 +45,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	time = GetTickCount() - time;
 	std::cout << "Render time: " << time << " ms";
-
+	char c;
+	std::cin >> c;
 	
 	return 0;
 }

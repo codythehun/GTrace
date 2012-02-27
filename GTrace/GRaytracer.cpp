@@ -5,6 +5,7 @@
 
 #include <Eigen/core>
 #include <float.h>
+#include <algorithm>
 
 using namespace Eigen;
 using namespace std;
@@ -20,6 +21,8 @@ namespace gtrace
 	{
 		if (m_camera) delete m_camera;
 		if (m_render_buffer) delete m_render_buffer;
+		
+		for_each(m_objects.begin(), m_objects.end(), [](GBody* obj) { delete obj; });
 	}
 
 	void GRaytracer::SetCamera(GCamera* camera)
@@ -33,6 +36,31 @@ namespace gtrace
 	void GRaytracer::AddObject(GBody* object)
 	{
 		m_objects.push_back(object);
+	}
+
+	bool GRaytracer::TraceShadowRay(const GRay& ray, float& distance, GBody* ignore)
+	{
+		float min_distance = FLT_MAX;
+		Vector3f min_normal;
+		GBody* hit = 0;
+		Vector3f normal;
+
+		for(auto obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it)
+		{
+			if (*obj_it != ignore && (*obj_it)->Intersect(ray, distance, normal) && distance < min_distance)
+			{
+				min_distance = distance;
+				min_normal = normal;
+				hit = *obj_it;
+			}
+		}
+		if (hit)
+		{
+			distance = min_distance;
+			normal = min_normal;
+			return true;
+		}
+		return false;
 	}
 
 	bool GRaytracer::TraceRay(const GRay& ray, float& distance, Vector3f& normal, GBody* &obj)
@@ -69,7 +97,7 @@ namespace gtrace
 		{
 			for(unsigned int y =0; y < m_camera->GetImageHeight(); ++y)
 			{
-				geometry::GRay ray = m_camera->GetRayForPosition(x, y);
+				GRay ray = m_camera->GetRayForPosition(x, y);
 				float distance;
 				Vector3f normal;
 				GBody* hit;
@@ -77,23 +105,24 @@ namespace gtrace
 				if (TraceRay(ray, distance, normal, hit))
 				{
 			
-					Vector3f col(hit->m_material.m_ambient);
+					Vector3f col(Vector3f::Zero());
 
 					GRay shadow_ray(ray.m_origin + ray.m_direction * distance + normal * 0.00001f, -lightdir);
 					float distance2;
 					Vector3f normal2;
-					GBody* hit2;
 					float diffuse = 0.0f;
 					float spec = 0.0f;
-					if (!TraceRay(shadow_ray, distance2, normal2, hit2))
+					float ambient_occlusion = 1.0f;
+					if (TraceShadowRay(shadow_ray, distance2, hit)) ambient_occlusion = clamp(distance2 / 0.2f);
+					else
 					{
 						diffuse = clamp(-lightdir.dot(normal));
-						Vector3f refl_vec = ray.m_direction + normal * ray.m_direction.dot(normal) * 2.0f;
-					
+						Vector3f refl_vec = ray.m_direction + normal * ray.m_direction.dot(normal) * 2.0f;	
 						spec =  pow(clamp(lightdir.dot(refl_vec)), hit->m_material.m_shininess);
+
+						col += diffuse * hit->m_material.m_diffuse + spec * hit->m_material.m_specular;
 					}
-					col += diffuse * hit->m_material.m_diffuse + spec * hit->m_material.m_specular;
-					
+					col += hit->m_material.m_ambient * ambient_occlusion;
 					color[0] = col[0] > 1.0f ? 255 : col[0] * 255;
 					color[1] = col[1] > 1.0f ? 255 : col[1] * 255;
 					color[2] = col[2] > 1.0f ? 255 : col[2] * 255;

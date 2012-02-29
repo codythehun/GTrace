@@ -15,7 +15,7 @@ namespace geometry
 
 	GSphere::GSphere(Vector3f position, float radius): m_position(position), m_radius(radius) {}
 
-	bool GSphere::Intersect(const GRay& ray, float& distance, Vector3f& normal) const
+	bool GSphere::Intersect(const GRay& ray, GHit& hit) const
 	{
 		float x1, x2; // x is the unknown: distance to travel along ray to hit sphere
 		// equation: ||ray.m_origin + x * ray.m_direction - m_position || = m_radius
@@ -32,25 +32,23 @@ namespace geometry
 		x2 = -b + discr;
 		x1 = -b - discr;
 		if( x2 < 0.0f ) return false; // sphere is behind ray origin
-		else if ( x1 >= 0.0f) distance = x1 / 2.0f;
-		else distance = x2 / 2.0f; // should I negate normal then ??
 
-		normal = (R + ray.m_direction * distance) / m_radius;
+		if(hit.fields & (GHit::DISTANCE | GHit::POSITION | GHit::NORMAL))
+		{
+			if ( x1 >= 0.0f) hit.distance = x1 / 2.0f;
+			else hit.distance = x2 / 2.0f; // should I negate normal then ??
+		}
+		if(hit.fields & GHit::POSITION) hit.position = ray.m_origin + ray.m_direction * hit.distance;
+		if(hit.fields & GHit::NORMAL) hit.normal = (R + ray.m_direction * hit.distance) / m_radius;
+		
+		if(hit.fields & GHit::TEXCOORDS){
+		//TODO implement
+		}
+
+		
 		return true;
 	}
 
-	// lame implementation, should refactor not to calculate normal !!
-	bool GSphere::Intersect(const GRay& ray, float& distance) const
-	{
-		Vector3f tmp;
-		return Intersect(ray, distance, tmp);
-	}
-
-	bool GSphere::Intersect(const GRay& ray) const
-	{
-		float tmp;
-		return Intersect(ray, tmp);
-	}
 
 }
 }

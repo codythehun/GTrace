@@ -42,19 +42,21 @@ namespace gtrace
 	{
 		float min_distance = FLT_MAX;
 		Vector3f min_normal;
-		GBody* hit = 0;
+		GBody* obj = 0;
+		GHit hit;
+		hit.fields = GHit::DISTANCE | GHit::NORMAL;
 		Vector3f normal;
 
 		for(auto obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it)
 		{
-			if (*obj_it != ignore && (*obj_it)->Intersect(ray, distance, normal) && distance < min_distance)
+			if (*obj_it != ignore && (*obj_it)->Intersect(ray, hit) && hit.distance < min_distance)
 			{
-				min_distance = distance;
-				min_normal = normal;
-				hit = *obj_it;
+				min_distance = hit.distance;
+				min_normal = hit.normal;
+				obj = *obj_it;
 			}
 		}
-		if (hit)
+		if (obj)
 		{
 			distance = min_distance;
 			normal = min_normal;
@@ -67,22 +69,25 @@ namespace gtrace
 	{
 		float min_distance = FLT_MAX;
 		Vector3f min_normal;
-		GBody* hit = 0;
+		GBody* res = 0;
+		GHit hit;
+		hit.fields = GHit::DISTANCE | GHit::NORMAL;
+		
 
 		for(auto obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it)
 		{
-			if ((*obj_it)->Intersect(ray, distance, normal) && distance < min_distance)
+			if ((*obj_it)->Intersect(ray, hit) && hit.distance < min_distance)
 			{
-				min_distance = distance;
-				min_normal = normal;
-				hit = *obj_it;
+				min_distance = hit.distance;
+				min_normal = hit.normal;
+				res = *obj_it;
 			}
 		}
-		if (hit)
+		if (res)
 		{
 			distance = min_distance;
 			normal = min_normal;
-			obj = hit;
+			obj = res;
 			return true;
 		}
 		return false;
@@ -118,11 +123,11 @@ namespace gtrace
 					{
 						diffuse = clamp(-lightdir.dot(normal));
 						Vector3f refl_vec = ray.m_direction + normal * ray.m_direction.dot(normal) * 2.0f;	
-						spec =  pow(clamp(lightdir.dot(refl_vec)), hit->m_material.m_shininess);
+						spec =  pow(clamp(lightdir.dot(refl_vec)), hit->m_material.m_shininess());
 
-						col += diffuse * hit->m_material.m_diffuse + spec * hit->m_material.m_specular;
+						col += diffuse * hit->m_material.m_diffuse() + spec * hit->m_material.m_specular();
 					}
-					col += hit->m_material.m_ambient * ambient_occlusion;
+					col += hit->m_material.m_ambient() * ambient_occlusion;
 					color[0] = col[0] > 1.0f ? 255 : col[0] * 255;
 					color[1] = col[1] > 1.0f ? 255 : col[1] * 255;
 					color[2] = col[2] > 1.0f ? 255 : col[2] * 255;

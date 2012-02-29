@@ -14,9 +14,7 @@ namespace geometry
 			GSphere();
 			GSphere(Eigen::Vector3f position, float radius);
 
-			bool Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const;
-			bool Intersect(const GRay& ray, float& distance) const;
-			bool Intersect(const GRay& ray) const;
+			bool Intersect(const GRay& ray, GHit& hit) const;
 
 		private:
 			Eigen::Vector3f m_position;

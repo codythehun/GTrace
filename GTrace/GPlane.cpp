@@ -17,18 +17,8 @@ namespace geometry
 	{
 		m_normal.normalize();
 	}
-
-	bool GPlane::Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const
-	{
-		if(Intersect(ray, distance))
-		{
-			normal = m_normal;
-			return true;
-		}
-		else return false;
-	}
 	
-	bool GPlane::Intersect(const GRay& ray, float& distance) const
+	bool GPlane::Intersect(const GRay& ray, GHit& hit) const
 	{
 		float product = m_normal.dot(ray.m_direction);
 		if (product == 0.0f) return false; // plane and ray are parallel
@@ -36,16 +26,17 @@ namespace geometry
 		float dist = (m_dist - d) / product; // distance from ray origin to plane
 		if( dist < 0.0f) return false;
 
-		distance = dist;
+		if(hit.fields & GHit::DISTANCE) hit.distance = dist;
+		if(hit.fields & GHit::NORMAL) hit.normal = m_normal;
+		if(hit.fields & GHit::POSITION) hit.position = ray.m_origin + ray.m_direction * dist;
+		if(hit.fields & GHit::TEXCOORDS){
+		//TODO implement
+		}
+
 		return true;
 	}
 
-		
-	bool GPlane::Intersect(const GRay& ray) const
-	{
-		float tmp;
-		return Intersect(ray, tmp);
-	}
+	
 
 }
 }

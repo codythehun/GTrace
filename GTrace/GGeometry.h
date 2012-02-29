@@ -24,14 +24,23 @@ namespace geometry
 
 	};
 
+	class GHit
+	{
+	public:
+		typedef enum Fields { DISTANCE = 1, POSITION = 2, NORMAL = 4, TEXCOORDS = 8, ALL = 15 };
+		int fields;
+		float distance;
+		Eigen::Vector3f position;
+		Eigen::Vector3f normal;
+		float u,v;
+	};
+
 	class GBody
 	{
 		public:
 			material::GMaterial m_material; // gross...
 
-			virtual bool Intersect(const GRay& ray, float& distance, Eigen::Vector3f& normal) const = 0;
-			virtual bool Intersect(const GRay& ray, float& distance) const = 0;
-			virtual bool Intersect(const GRay& ray) const = 0;
+			virtual bool Intersect(const GRay& ray, GHit& hit) const = 0;
 			// future ideas:
 
 			// -- Materials:

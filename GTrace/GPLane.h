@@ -16,6 +16,7 @@ namespace geometry
 			GPlane(Eigen::Vector3f normal, float dist);
 
 			bool Intersect(const GRay& ray, GHit& hit) const;
+			~GPlane() {}
 
 		private:
 			Eigen::Vector3f m_normal;

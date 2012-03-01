@@ -12,6 +12,7 @@ namespace geometry
 	{
 		public:
 			GSphere();
+			~GSphere() {}
 			GSphere(Eigen::Vector3f position, float radius);
 
 			bool Intersect(const GRay& ray, GHit& hit) const;

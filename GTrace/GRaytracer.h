@@ -20,8 +20,8 @@ namespace gtrace
 
 		void Render(std::string file_name);
 	protected:
-		bool TraceRay(const geometry::GRay& ray, float& distance, Eigen::Vector3f& normal, geometry::GBody* &obj);
-		bool TraceShadowRay(const geometry::GRay& ray, float& distance, geometry::GBody* ignore = 0);
+		bool TraceRay(const geometry::GRay& ray, geometry::GHit& hit);
+		bool TraceShadowRay(const geometry::GRay& ray, geometry::GHit& hit, const geometry::GBody* ignore = 0);
 	private:
 		GCamera *m_camera;
 		std::list<geometry::GBody*> m_objects;

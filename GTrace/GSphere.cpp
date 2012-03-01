@@ -33,6 +33,7 @@ namespace geometry
 		x1 = -b - discr;
 		if( x2 < 0.0f ) return false; // sphere is behind ray origin
 
+		hit.obj = static_cast<const GBody*>(this);
 		if(hit.fields & (GHit::DISTANCE | GHit::POSITION | GHit::NORMAL))
 		{
 			if ( x1 >= 0.0f) hit.distance = x1 / 2.0f;

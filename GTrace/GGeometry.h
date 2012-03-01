@@ -2,10 +2,14 @@
 
 #include <Eigen/core>
 #include <Eigen/geometry>
-#include "GMaterial.h"
 
 namespace gtrace
 {
+namespace material
+{
+	class GMaterial;
+}
+
 namespace geometry 
 {
 	float Deg2Rad(float degree);
@@ -24,6 +28,8 @@ namespace geometry
 
 	};
 
+	class GBody;
+
 	class GHit
 	{
 	public:
@@ -33,13 +39,13 @@ namespace geometry
 		Eigen::Vector3f position;
 		Eigen::Vector3f normal;
 		float u,v;
+		const GBody* obj;
 	};
 
 	class GBody
 	{
 		public:
-			material::GMaterial m_material; // gross...
-
+			virtual ~GBody() {}
 			virtual bool Intersect(const GRay& ray, GHit& hit) const = 0;
 			// future ideas:
 
@@ -52,7 +58,11 @@ namespace geometry
 
 			// -- Lighting:
 			// Should also be able to return a random point on the surface, which will be good for monte carlo simulations (shadow rays, area lights etc)
+			const gtrace::material::GMaterial* GetMaterial() const { return m_material; }
+			void SetMaterial(gtrace::material::GMaterial* material) { m_material = material; }
 
+		protected:
+			gtrace::material::GMaterial* m_material;
 
 	};
 

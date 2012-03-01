@@ -3,40 +3,36 @@
 #include <Eigen/core>
 #include "GGeometry.h"
 #include <Eigen\core>
+#include <functional>
+
 
 namespace gtrace 
 {
 namespace material
 {
 	template<class T>
-	class GMapper
-	{
-	public:
-		virtual const T& operator() (float u, float v) { return T();}
-	};
-
-	template<class T>
 	class GParameter
 	{
 	public:
 		typedef T value_type;
+		typedef typename std::function<const T&(float, float)> mapper_type;
 
 		GParameter(): m_mapped(false), m_map_channel(0) {}
 		GParameter(const T& value): m_mapped(false), m_value(value), m_map_channel(0) {}
-		GParameter(int map_channel, const GMapper<T>& mapper) : m_mapped(true), m_mapper(mapper), m_map_channel(map_channel) {}
+		GParameter(int map_channel, const mapper_type& mapper) : m_mapped(true), m_mapper(mapper), m_map_channel(map_channel) {}
 
-		const T& Resolve()
+		const T& Resolve(const gtrace::geometry::GHit& hit)
 		{
 			if(!m_mapped) return m_value;
-			//return m_mapper(hit.u, hit.v);
+			return m_mapper(hit.u, hit.v);
 		}
 
-		const T& operator()()
+		const T& operator()(const gtrace::geometry::GHit& hit)
 		{
-			return Resolve();
+			return Resolve(hit);
 		}
 
-		void SetMapper(int channel, const GMapper<T>& mapper) 
+		void SetMapper(int channel, const mapper_type& mapper) 
 		{
 			m_map_channel = channel;
 			m_mapper = mapper; 
@@ -52,7 +48,7 @@ namespace material
 	protected:
 		bool m_mapped;
 
-		GMapper<T> m_mapper;
+		std::function<const T&(float, float)> m_mapper;
 		int m_map_channel;
 
 		T m_value;

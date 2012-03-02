@@ -12,8 +12,10 @@ using namespace Eigen;
 using namespace std;
 using namespace cimg_library;
 
+const float EPSILON = 0.0001f;
 namespace gtrace
 {
+
 
 	GRaytracer::GRaytracer():m_camera(new GCamera()), m_render_buffer(new CImg<unsigned char>(m_camera->GetImageWidth(), m_camera->GetImageHeight(), 1, 3)) {}
 
@@ -79,11 +81,62 @@ namespace gtrace
 		return found;
 	}
 
+	Vector3f GRaytracer::TraceRay(const geometry::GRay& ray, int depth)
+	{
+		using namespace geometry;
+		using namespace material;
+		Vector3f lightdir(-Vector3f::UnitY());
+		Vector3f col(Vector3f::Zero());
+		GHit hit;
+
+		if (TraceRay(ray, hit))
+		{
+			GMaterial* mat = const_cast<GMaterial*>(hit.obj->GetMaterial()); // TODO: const correctness...
+			bool shadow = false;
+			float ambient_occlusion = 1.0f;
+			Vector3f refl_vec;
+
+			if(m_options.Applicable(depth, Options::SHADOW))
+			{
+				GRay shadow_ray(hit.position + hit.normal * EPSILON, -lightdir);
+				GHit sh_hit;
+				if (TraceShadowRay(shadow_ray, sh_hit, hit.obj)) 
+				{
+					ambient_occlusion = clamp(sh_hit.distance / 0.2f);
+					shadow = true;
+				}
+			}
+			
+			if((!shadow && m_options.Applicable(depth, Options::SPECULAR)) ||
+			   m_options.Applicable(depth, Options::REFLECTION))
+			{
+				refl_vec = ray.m_direction - hit.normal * ray.m_direction.dot(hit.normal) * 2.0f;	
+			}
+
+			if(!shadow)
+			{
+				if(m_options.Applicable(depth, Options::SPECULAR))
+				{
+					col += mat->m_specular(hit) * pow(clamp(-lightdir.dot(refl_vec)), mat->m_shininess(hit));
+				}
+				col +=  mat->m_diffuse(hit) * clamp(-lightdir.dot(hit.normal)) ;
+			}
+			if(m_options.Applicable(depth, Options::REFLECTION) && mat->m_reflection(hit) > 0.0f)
+			{
+				GRay refl_ray(hit.position + hit.normal * EPSILON, refl_vec);
+				col += TraceRay(refl_ray, depth + 1) * mat->m_reflection(hit) ;//* pow(1.0f + ray.m_direction.dot(hit.normal), mat->m_freshnel_coeff(hit));
+			}
+			col += mat->m_ambient(hit) * ambient_occlusion;
+		}
+		return col;
+	}
+
 	void GRaytracer::Render(std::string file_name)
 	{
 		using namespace geometry;
 		using namespace material;
 		Vector3f lightdir(-Vector3f::UnitY());
+		Vector3f col;
 
 		unsigned char color[3];
 		for(unsigned int x = 0; x < m_camera->GetImageWidth(); ++x)
@@ -91,38 +144,16 @@ namespace gtrace
 			for(unsigned int y =0; y < m_camera->GetImageHeight(); ++y)
 			{
 				GRay ray = m_camera->GetRayForPosition(x, y);
-				GHit hit;
+				col = TraceRay(ray);
+				color[0] = col[0] > 1.0f ? 255 : col[0] * 255;
+				color[1] = col[1] > 1.0f ? 255 : col[1] * 255;
+				color[2] = col[2] > 1.0f ? 255 : col[2] * 255;
 
-				if (TraceRay(ray, hit))
-				{
-			
-					Vector3f col(Vector3f::Zero());
-					GMaterial* mat = const_cast<GMaterial*>(hit.obj->GetMaterial()); // TODO: const correctness...
-
-					GRay shadow_ray(hit.position + hit.normal * 0.00001f, -lightdir);
-					GHit hit2;
-					float diffuse = 0.0f;
-					float spec = 0.0f;
-					float ambient_occlusion = 1.0f;
-					if (TraceShadowRay(shadow_ray, hit2, hit.obj)) ambient_occlusion = clamp(hit2.distance / 0.2f);
-					else
-					{
-						diffuse = clamp(-lightdir.dot(hit.normal));
-						Vector3f refl_vec = ray.m_direction + hit.normal * ray.m_direction.dot(hit.normal) * 2.0f;	
-						spec =  pow(clamp(lightdir.dot(refl_vec)), mat->m_shininess(hit));
-
-						col += diffuse * mat->m_diffuse(hit) + spec * mat->m_specular(hit);
-					}
-					col += mat->m_ambient(hit) * ambient_occlusion;
-					color[0] = col[0] > 1.0f ? 255 : col[0] * 255;
-					color[1] = col[1] > 1.0f ? 255 : col[1] * 255;
-					color[2] = col[2] > 1.0f ? 255 : col[2] * 255;
-
-					m_render_buffer->draw_point(x, y, color);
+				m_render_buffer->draw_point(x, y, color);
 					
-				}
-
 			}
+
+		
 		}
 		m_render_buffer->save(file_name.c_str());
 	}

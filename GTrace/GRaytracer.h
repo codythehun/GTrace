@@ -32,6 +32,7 @@ namespace gtrace
 
 		void SetCamera(GCamera* camera);
 		void AddObject(geometry::GBody* object);
+		void AddLight(geometry::GBody* light);
 		void SetOptions(const Options &options) { m_options = options; }
 		void Render(std::string file_name);
 	protected:
@@ -41,6 +42,7 @@ namespace gtrace
 	private:
 		GCamera *m_camera;
 		std::list<geometry::GBody*> m_objects;
+		std::list<geometry::GBody*> m_lights;
 		cimg_library::CImg<unsigned char> *m_render_buffer;
 		Options m_options;
 

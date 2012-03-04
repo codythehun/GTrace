@@ -16,9 +16,10 @@ namespace geometry
 			GSphere(Eigen::Vector3f position, float radius);
 
 			bool Intersect(const GRay& ray, GHit& hit) const;
+			
+			Eigen::Vector3f GetRandomPoint()const;
 
 		private:
-			Eigen::Vector3f m_position;
 			float m_radius;
 
 	};

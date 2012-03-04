@@ -15,6 +15,7 @@ namespace geometry
 	float Deg2Rad(float degree);
 	float Rad2Deg(float radian);
 	float clamp(float value, float min=0.0f, float max=1.0f);
+	float random(float min, float max);
 	
 	class GRay
 	{
@@ -45,6 +46,8 @@ namespace geometry
 	class GBody
 	{
 		public:
+			GBody(Eigen::Vector3f position=Eigen::Vector3f::Zero());
+
 			virtual ~GBody() {}
 			virtual bool Intersect(const GRay& ray, GHit& hit) const = 0;
 			// future ideas:
@@ -60,9 +63,13 @@ namespace geometry
 			// Should also be able to return a random point on the surface, which will be good for monte carlo simulations (shadow rays, area lights etc)
 			const gtrace::material::GMaterial* GetMaterial() const { return m_material; }
 			void SetMaterial(gtrace::material::GMaterial* material) { m_material = material; }
+			const Eigen::Vector3f GetPosition()const { return m_position; }
+
+			virtual Eigen::Vector3f GetRandomPoint()const =0;
 
 		protected:
 			gtrace::material::GMaterial* m_material;
+			Eigen::Vector3f m_position;
 
 	};
 

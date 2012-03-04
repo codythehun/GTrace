@@ -18,6 +18,11 @@ namespace geometry
 		m_normal.normalize();
 	}
 	
+	GPlane::GPlane(Vector3f position, Vector3f normal):GBody(position), m_normal(normal)
+	{
+		m_dist = m_normal.dot(m_position);
+	}
+
 	bool GPlane::Intersect(const GRay& ray, GHit& hit) const
 	{
 		float product = m_normal.dot(ray.m_direction);
@@ -53,6 +58,10 @@ namespace geometry
 		return true;
 	}
 
+	Vector3f GPlane::GetRandomPoint()const
+	{
+		return Vector3f(); // dummy implementation for now
+	}
 	
 
 }

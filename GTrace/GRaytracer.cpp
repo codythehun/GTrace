@@ -92,41 +92,47 @@ namespace gtrace
 		if (TraceRay(ray, hit))
 		{
 			GMaterial* mat = const_cast<GMaterial*>(hit.obj->GetMaterial()); // TODO: const correctness...
-			bool shadow = false;
-			float ambient_occlusion = 1.0f;
 			Vector3f refl_vec;
 
-			if(m_options.Applicable(depth, Options::SHADOW))
+			refl_vec = ray.m_direction - hit.normal * ray.m_direction.dot(hit.normal) * 2.0f;	
+
+			for(auto light_it = m_lights.begin(); light_it != m_lights.end(); ++light_it)
 			{
-				GRay shadow_ray(hit.position + hit.normal * EPSILON, -lightdir);
-				GHit sh_hit;
-				if (TraceShadowRay(shadow_ray, sh_hit, hit.obj)) 
+				int samples = 32;
+				float weight = 1.0f/32.0f;
+				for(int i=0; i<samples; ++i)
 				{
-					ambient_occlusion = clamp(sh_hit.distance / 0.2f);
-					shadow = true;
+					Vector3f light_vec = (*light_it)->GetRandomPoint() - hit.position;
+					light_vec.normalize();
+					bool shadow = false;
+
+					if(m_options.Applicable(depth, Options::SHADOW))
+					{
+						GRay shadow_ray(hit.position + hit.normal * EPSILON, light_vec);
+						GHit sh_hit;
+						if (TraceShadowRay(shadow_ray, sh_hit, hit.obj)) shadow = true;
+					}
+					
+					if(!shadow)
+					{
+						if(m_options.Applicable(depth, Options::SPECULAR))
+						{
+							col += mat->m_specular(hit) * pow(clamp(light_vec.dot(refl_vec)), mat->m_shininess(hit)) * weight;
+						}
+						col +=  mat->m_diffuse(hit) * clamp(light_vec.dot(hit.normal)) * weight ;
+
+					}
 				}
-			}
-			
-			if((!shadow && m_options.Applicable(depth, Options::SPECULAR)) ||
-			   m_options.Applicable(depth, Options::REFLECTION))
-			{
-				refl_vec = ray.m_direction - hit.normal * ray.m_direction.dot(hit.normal) * 2.0f;	
+				
 			}
 
-			if(!shadow)
-			{
-				if(m_options.Applicable(depth, Options::SPECULAR))
-				{
-					col += mat->m_specular(hit) * pow(clamp(-lightdir.dot(refl_vec)), mat->m_shininess(hit));
-				}
-				col +=  mat->m_diffuse(hit) * clamp(-lightdir.dot(hit.normal)) ;
-			}
+	
 			if(m_options.Applicable(depth, Options::REFLECTION) && mat->m_reflection(hit) > 0.0f)
 			{
 				GRay refl_ray(hit.position + hit.normal * EPSILON, refl_vec);
 				col += TraceRay(refl_ray, depth + 1) * mat->m_reflection(hit) ;//* pow(1.0f + ray.m_direction.dot(hit.normal), mat->m_freshnel_coeff(hit));
 			}
-			col += mat->m_ambient(hit) * ambient_occlusion;
+			col += mat->m_ambient(hit);
 		}
 		return col;
 	}
@@ -156,6 +162,11 @@ namespace gtrace
 		
 		}
 		m_render_buffer->save(file_name.c_str());
+	}
+			
+	void GRaytracer::AddLight(geometry::GBody* light)
+	{
+		m_lights.push_back(light);
 	}
 			
 }

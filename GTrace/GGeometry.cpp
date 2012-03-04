@@ -4,6 +4,7 @@
 #include <Eigen/core>
 #include <Eigen/geometry>
 #include "GGeometry.h"
+#include <random>
 
 using namespace Eigen;
 
@@ -27,6 +28,12 @@ namespace geometry
 	{ 
 		return value < min ? min : (value > max ? max : value); 
 	}
+
+	float random(float min, float max)
+	{
+		return min + rand() / (float)RAND_MAX * (max - min);
+	}
+
 	
 
 	GRay::GRay(): m_origin(Vector3f::Zero()), m_direction(Vector3f::Zero()) {}
@@ -34,6 +41,8 @@ namespace geometry
 	GRay::GRay(Vector3f direction): m_origin(Vector3f::Zero()), m_direction(direction) {}
 
 	GRay::GRay(Vector3f origin, Vector3f direction): m_origin(origin), m_direction(direction) {}
+
+	GBody::GBody(Vector3f position):m_position(position) {}
 
 }
 }

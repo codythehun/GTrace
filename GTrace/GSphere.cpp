@@ -3,7 +3,7 @@
 #include "GGeometry.h"
 #include "GSphere.h"
 #include <Eigen/core>
-
+#include <random>
 using namespace Eigen;
 
 namespace gtrace
@@ -11,9 +11,9 @@ namespace gtrace
 namespace geometry
 {
 
-	GSphere::GSphere(): m_radius(1), m_position(Vector3f::Zero()) {}
+	GSphere::GSphere(): m_radius(1) {}
 
-	GSphere::GSphere(Vector3f position, float radius): m_position(position), m_radius(radius) {}
+	GSphere::GSphere(Vector3f position, float radius): GBody(position), m_radius(radius) {}
 
 	bool GSphere::Intersect(const GRay& ray, GHit& hit) const
 	{
@@ -48,6 +48,14 @@ namespace geometry
 
 		
 		return true;
+	}
+
+	Vector3f GSphere:: GetRandomPoint()const
+	{
+		float pitch = random(-M_PI, M_PI);
+		float yaw = random(0, 2*M_PI);
+
+		return m_position + AngleAxisf(pitch, Vector3f::UnitX()) * AngleAxisf(yaw, Vector3f::UnitY()) * Vector3f(0,0,m_radius);
 	}
 
 

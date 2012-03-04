@@ -60,8 +60,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		};
 
 	m2.m_diffuse.SetMapper(0, checker);
-	m2.m_ambient.SetMapper(0, checker);
-	m2.m_diffuse.SetValue(Vector3f(0.3f, 0.3f, 0.3f));
+	//m2.m_ambient.SetMapper(0, checker);
+	//m2.m_diffuse.SetValue(Vector3f(0.3f, 0.3f, 0.3f));
 	m2.m_reflection = 0.8f;
 	m2.m_freshnel_coeff = 0.5f;
 	//m2.m_specular = Vector3f(0.5f, 0.5f, 0.5f);
@@ -78,7 +78,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	tracer.AddObject(plane);
 	tracer.AddObject(sph);
 	tracer.AddObject(sph2);
+
+	tracer.AddLight(new GSphere(Vector3f(0, 1 ,2), 0.2));
 	tracer.Render("render.bmp");
+	
 	
 	time = GetTickCount() - time;
 	std::cout << "Render time: " << time << " ms";

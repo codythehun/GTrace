@@ -63,7 +63,7 @@ namespace material
 		GParameter3f m_diffuse;
 		GParameter3f m_ambient;
 		GParameter3f m_specular;
-		GParameterf m_transparency;
+		GParameterf m_opacity;
 		GParameterf m_reflection;
 		GParameterf m_refraction_index;
 		GParameterf m_freshnel_coeff;

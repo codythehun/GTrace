@@ -36,10 +36,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	m1.m_diffuse = Vector3f(0.0f, 0.0f, 1.0f);
 	m1.m_specular = Vector3f(1.0f, 1.0f, 1.0f);
 	m1.m_freshnel_coeff = 3.0f;
-	m1.m_shininess = 40.0f;
+	m1.m_shininess = 2.0f;
 	m1.m_reflection = 0.2f;
+	m1.m_opacity = 1.0f;
+	m1.m_refraction_index = 1.33;
 	m3 = m1;
-	m3.m_diffuse = Vector3f(1.0f, 0.0f, 0.0f);
+	m3.m_opacity = 0.5f;
+	m3.m_reflection = 0.2f;
+	m3.m_diffuse = Vector3f(0.0f, 0.0f, 0.0f);
 	m3.m_ambient = Vector3f(0.2f, 0.0f, 0.0f);
 	sph2->SetMaterial(&m3);
 	sph->SetMaterial(&m1);
@@ -67,7 +71,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//m2.m_specular = Vector3f(0.5f, 0.5f, 0.5f);
 	//m2.m_shininess = 5.0f;
 	plane->SetMaterial(&m2);
-	 
+	 m2.m_opacity = 1.0f;
 	GRaytracer tracer;
 	GRaytracer::Options opts;
 	//opts.SetDepth(GRaytracer::Options::SHADOW, 0); // turn off shadows

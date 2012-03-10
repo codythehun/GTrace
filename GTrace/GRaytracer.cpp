@@ -93,22 +93,21 @@ namespace gtrace
 		{
 			GMaterial* mat = const_cast<GMaterial*>(hit.obj->GetMaterial()); // TODO: const correctness...
 			Vector3f refl_vec, refr_vec;
-
+			float freshnel = pow(hit.normal.dot(-ray.m_direction), 5.0f);
 			if(m_options.Applicable(depth, Options::REFRACTION) && mat->m_opacity(hit) < 1.0f)
 			{
 				float dot1 = hit.normal.dot(-ray.m_direction);
 				bool inside = dot1 < 0.0f;
 				float refr_index = 1.0f /mat->m_refraction_index(hit);
 				if(inside) dot1 = -dot1;
-					
-				
+
 				float dot2 = sqrt(1.0f - refr_index * refr_index * (1.0f - dot1 * dot1));
 				if(!inside) // ray enterint object
 				{
 					refr_vec = refr_index * ray.m_direction + (refr_index * dot1 - dot2) * hit.normal;
 					refr_vec.normalize();
 					GRay refr_ray(hit.position - hit.normal * EPSILON, refr_vec);
-					col += (1.0f - mat->m_opacity(hit))*TraceRay(refr_ray, depth); // no depth counting for passing through ray
+					col += (1.0f - mat->m_opacity(hit))*freshnel*TraceRay(refr_ray, depth); // no depth counting for passing through ray
 				}
 				else // ray leaving object
 				{
@@ -125,41 +124,42 @@ namespace gtrace
 
 			for(auto light_it = m_lights.begin(); light_it != m_lights.end(); ++light_it)
 			{
-				int samples = 32;
-				float weight = 1.0f/samples;
-				for(int i=0; i<samples; ++i)
+				Vector3f light(1.0f, 1.0f, 1.0f);
+				if(m_options.Applicable(depth, Options::SHADOW))
 				{
-					Vector3f light_vec = (*light_it)->GetSamplePoint(i, samples) - hit.position;
-					//Vector3f light_vec = (*light_it)->GetPosition() - hit.position;
+					int samples = 64;
+					float weight = 1.0f/samples;
 					
-					light_vec.normalize();
-					bool shadow = false;
-
-					if(m_options.Applicable(depth, Options::SHADOW))
+					for(int i=0; i<samples; ++i)
 					{
+						Vector3f light_vec = (*light_it)->GetSamplePoint(i, samples) - hit.position;
+						light_vec.normalize();
 						GRay shadow_ray(hit.position + hit.normal * EPSILON, light_vec);
 						GHit sh_hit;
-						if (TraceShadowRay(shadow_ray, sh_hit, hit.obj)) shadow = true;
-					}
-					
-					if(!shadow)
-					{
-						if(m_options.Applicable(depth, Options::SPECULAR))
+						if (TraceShadowRay(shadow_ray, sh_hit, hit.obj)) 
 						{
-							col += mat->m_specular(hit) * pow(clamp(light_vec.dot(refl_vec)), mat->m_shininess(hit)) * weight;
+							GMaterial* sh_mat = const_cast<GMaterial*>(sh_hit.obj->GetMaterial()); // TODO: i really need to fix this now... xD
+							light -= weight * lerp(Vector3f::Zero(), Vector3f(1.0f, 1.0f, 1.0f) - sh_mat->m_diffuse(sh_hit), sh_mat->m_opacity(sh_hit));
 						}
-						col +=  mat->m_diffuse(hit) * clamp(light_vec.dot(hit.normal)) * mat->m_opacity(hit)  * weight ;
-
 					}
 				}
-				
+
+				Vector3f light_vec = (*light_it)->GetPosition() - hit.position;
+				light_vec.normalize();	
+
+				if(m_options.Applicable(depth, Options::SPECULAR))
+				{
+					col += light.cwiseProduct(mat->m_specular(hit) * pow(clamp(light_vec.dot(refl_vec)), mat->m_shininess(hit)));
+				}
+				col +=  light.cwiseProduct(mat->m_diffuse(hit) * clamp(light_vec.dot(hit.normal)) * mat->m_opacity(hit));
+		
 			}
 
 	
 			if(m_options.Applicable(depth, Options::REFLECTION) && mat->m_reflection(hit) > 0.0f)
 			{
 				GRay refl_ray(hit.position + hit.normal * EPSILON, refl_vec);
-				col += TraceRay(refl_ray, depth + 1) * mat->m_reflection(hit) ;//* pow(1.0f + ray.m_direction.dot(hit.normal), mat->m_freshnel_coeff(hit));
+				col += (1.0f - freshnel)*TraceRay(refl_ray, depth + 1) * mat->m_reflection(hit) ;//* pow(1.0f + ray.m_direction.dot(hit.normal), mat->m_freshnel_coeff(hit));
 			}
 			col += mat->m_ambient(hit) * mat->m_opacity(hit) ;
 		}

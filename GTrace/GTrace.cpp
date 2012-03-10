@@ -41,8 +41,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	m1.m_opacity = 1.0f;
 	m1.m_refraction_index = 1.33f;
 	m3 = m1;
-	m3.m_opacity = 0.6f;
-	m3.m_reflection = 0.0f;
+	m3.m_opacity = 0.0f;
+	m3.m_reflection = 1.0f;
 	m3.m_diffuse = Vector3f(1.0f, 0.0f, 0.0f);
 	m3.m_ambient = Vector3f(0.0f, 0.0f, 0.0f);
 	sph2->SetMaterial(&m3);
@@ -77,6 +77,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//opts.SetDepth(GRaytracer::Options::SHADOW, 0); // turn off shadows
 	opts.SetDepth(GRaytracer::Options::SHADOW, 2);
 	opts.SetDepth(GRaytracer::Options::SPECULAR, 2);
+	opts.SetDepth(GRaytracer::Options::REFRACTION, 2);
 	tracer.SetOptions(opts);
 	tracer.SetCamera(cam);
 	tracer.AddObject(plane);

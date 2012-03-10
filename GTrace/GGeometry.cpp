@@ -34,7 +34,10 @@ namespace geometry
 		return min + rand() / (float)RAND_MAX * (max - min);
 	}
 
-	
+	Vector3f lerp(Vector3f v1, Vector3f v2, float coeff)
+	{
+		return (1.0f - coeff) * v1 + coeff * v2;
+	}
 
 	GRay::GRay(): m_origin(Vector3f::Zero()), m_direction(Vector3f::Zero()) {}
 

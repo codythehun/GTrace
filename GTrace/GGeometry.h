@@ -16,6 +16,14 @@ namespace geometry
 	float Rad2Deg(float radian);
 	float clamp(float value, float min=0.0f, float max=1.0f);
 	float random(float min, float max);
+	/*
+	template<class T, class F> 
+	T lerp(T x1, T& x2, F coeff)
+	{
+		return (1 - coeff) * x1 + coeff * x2;
+	}*/
+
+	Eigen::Vector3f lerp(Eigen::Vector3f v1, Eigen::Vector3f v2, float coeff);
 	
 	class GRay
 	{

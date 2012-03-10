@@ -65,7 +65,7 @@ namespace geometry
 			void SetMaterial(gtrace::material::GMaterial* material) { m_material = material; }
 			const Eigen::Vector3f GetPosition()const { return m_position; }
 
-			virtual Eigen::Vector3f GetRandomPoint()const =0;
+			virtual Eigen::Vector3f GetSamplePoint(int n, int count)const =0;
 
 		protected:
 			gtrace::material::GMaterial* m_material;

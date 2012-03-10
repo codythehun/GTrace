@@ -58,7 +58,7 @@ namespace geometry
 		return true;
 	}
 
-	Vector3f GPlane::GetRandomPoint()const
+	Vector3f GPlane::GetSamplePoint(int n, int count)const
 	{
 		return Vector3f(); // dummy implementation for now
 	}

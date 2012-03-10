@@ -28,7 +28,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cam->SetOrientation(5, 0, 10);
 	//cam->SetPosition(Vector3f(0.0f, -0.95f, 0.0f));
 	GSphere* sph = new GSphere(Vector3f(0, -0.6f, 2.0f), 0.4f);
-	GSphere* sph2 = new GSphere(Vector3f(-1.0f, -0.6f, 2.2f), 0.4f);
+	GSphere* sph2 = new GSphere(Vector3f(1.0f, -0.6f, 2.2f), 0.4f);
 
 	GMaterial m1, m2, m3;
 
@@ -39,12 +39,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	m1.m_shininess = 2.0f;
 	m1.m_reflection = 0.2f;
 	m1.m_opacity = 1.0f;
-	m1.m_refraction_index = 1.33;
+	m1.m_refraction_index = 1.33f;
 	m3 = m1;
-	m3.m_opacity = 0.5f;
-	m3.m_reflection = 0.2f;
-	m3.m_diffuse = Vector3f(0.0f, 0.0f, 0.0f);
-	m3.m_ambient = Vector3f(0.2f, 0.0f, 0.0f);
+	m3.m_opacity = 0.6f;
+	m3.m_reflection = 0.0f;
+	m3.m_diffuse = Vector3f(1.0f, 0.0f, 0.0f);
+	m3.m_ambient = Vector3f(0.0f, 0.0f, 0.0f);
 	sph2->SetMaterial(&m3);
 	sph->SetMaterial(&m1);
 	
@@ -83,7 +83,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	tracer.AddObject(sph);
 	tracer.AddObject(sph2);
 
-	tracer.AddLight(new GSphere(Vector3f(0, 1 ,2), 0.2));
+	tracer.AddLight(new GSphere(Vector3f(0, 2 ,2), 0.4));
 	tracer.Render("render.bmp");
 	
 	

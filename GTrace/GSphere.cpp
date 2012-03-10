@@ -50,10 +50,18 @@ namespace geometry
 		return true;
 	}
 
-	Vector3f GSphere:: GetRandomPoint()const
+	Vector3f GSphere::GetSamplePoint(int n, int count)const
 	{
-		float pitch = random(-M_PI, M_PI);
-		float yaw = random(0, 2*M_PI);
+		int belt = sqrt((double)count) + 1;
+		if(belt < 3) belt = 3;
+		while(count % belt !=0) ++belt;
+		int rings = count / belt;
+		int ring_count = n / belt;
+		int belt_count = n % belt;
+		float pitch_radius = M_PI / (rings + 1.0f);
+		float yaw_radius = M_PI / belt;
+		float pitch = 2* pitch_radius * (ring_count + 1) - M_PI  + random(-pitch_radius, pitch_radius);
+		float yaw = 2* yaw_radius * belt_count + random(-yaw_radius, yaw_radius);
 
 		return m_position + AngleAxisf(pitch, Vector3f::UnitX()) * AngleAxisf(yaw, Vector3f::UnitY()) * Vector3f(0,0,m_radius);
 	}

@@ -97,22 +97,21 @@ namespace gtrace
 			if(m_options.Applicable(depth, Options::REFRACTION) && mat->m_opacity(hit) < 1.0f)
 			{
 				float dot1 = hit.normal.dot(-ray.m_direction);
-				float refr_index = mat->m_refraction_index(hit);
-				if(dot1 > 0.0f) refr_index = 1.0f / refr_index;
+				bool inside = dot1 < 0.0f;
+				float refr_index = 1.0f /mat->m_refraction_index(hit);
+				if(inside) dot1 = -dot1;
+					
 				
 				float dot2 = sqrt(1.0f - refr_index * refr_index * (1.0f - dot1 * dot1));
-				if(dot1 > 0.0f) // ray enterint object
+				if(!inside) // ray enterint object
 				{
-					refr_vec = refr_index * ray.m_direction - (refr_index * dot1 - dot2) * hit.normal;
+					refr_vec = refr_index * ray.m_direction + (refr_index * dot1 - dot2) * hit.normal;
 					refr_vec.normalize();
 					GRay refr_ray(hit.position - hit.normal * EPSILON, refr_vec);
 					col += (1.0f - mat->m_opacity(hit))*TraceRay(refr_ray, depth); // no depth counting for passing through ray
 				}
 				else // ray leaving object
 				{
-					dot1 = ray.m_direction.dot(-hit.normal);
-					dot2 = sqrt(1.0f - refr_index * refr_index * (1.0f - dot1 * dot1));
-			
 					refr_vec = refr_index * ray.m_direction - (refr_index * dot1 - dot2) * hit.normal;
 					refr_vec.normalize();
 					GRay refr_ray(hit.position + hit.normal * EPSILON, refr_vec);
@@ -126,12 +125,12 @@ namespace gtrace
 
 			for(auto light_it = m_lights.begin(); light_it != m_lights.end(); ++light_it)
 			{
-				int samples = 1;
-				float weight = 1.0f/1.0f;
+				int samples = 32;
+				float weight = 1.0f/samples;
 				for(int i=0; i<samples; ++i)
 				{
-					//Vector3f light_vec = (*light_it)->GetRandomPoint() - hit.position;
-					Vector3f light_vec = (*light_it)->GetPosition() - hit.position;
+					Vector3f light_vec = (*light_it)->GetSamplePoint(i, samples) - hit.position;
+					//Vector3f light_vec = (*light_it)->GetPosition() - hit.position;
 					
 					light_vec.normalize();
 					bool shadow = false;
@@ -147,7 +146,7 @@ namespace gtrace
 					{
 						if(m_options.Applicable(depth, Options::SPECULAR))
 						{
-							col += mat->m_specular(hit) * pow(clamp(light_vec.dot(refl_vec)), mat->m_shininess(hit)) * mat->m_opacity(hit) * weight;
+							col += mat->m_specular(hit) * pow(clamp(light_vec.dot(refl_vec)), mat->m_shininess(hit)) * weight;
 						}
 						col +=  mat->m_diffuse(hit) * clamp(light_vec.dot(hit.normal)) * mat->m_opacity(hit)  * weight ;
 

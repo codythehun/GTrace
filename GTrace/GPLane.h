@@ -18,7 +18,7 @@ namespace geometry
 			bool Intersect(const GRay& ray, GHit& hit) const;
 			~GPlane() {}
 
-			Eigen::Vector3f GetRandomPoint()const;
+			 Eigen::Vector3f GetSamplePoint(int n, int count)const;
 
 		private:
 			Eigen::Vector3f m_normal;

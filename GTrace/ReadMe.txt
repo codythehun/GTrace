@@ -1,40 +1,45 @@
-========================================================================
-    CONSOLE APPLICATION : GTrace Project Overview
-========================================================================
+Description
+------------
+GTrace is a simple ray tracer project with educational purposes.
 
-AppWizard has created this GTrace application for you.
+.Current features:
+* Phong lighting model
+* Area light and soft shadow approximation
+* Reflections and refractions
+* Basic scene management and primitives
+* Flexible material system with texture mapping
+* Arbitrary camera orientation with pitch yaw and roll
 
-This file contains a summary of what you will find in each of the files that
-make up your GTrace application.
+.Planned features:
+* More procedural textures with expression templates
+* KD tree support
+* Photon mapping
+* Sub surface scattering
+* Mesh importer and triangle support
+* Texture filtering
+* Depth of field
+* Anti aliasing
 
+.TODO list:
 
-GTrace.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+* Fixes
+** Fix area lights: use fixed grid points for samples, randomize around these points for each sample
 
-GTrace.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+* Features
+** Introduce BRDF. Freshnel equation for specular lighting, and also for reflection/refraction 
+** Introduce Beer's law for absorption
+** Introduce light types: directional, point, area. Adjustable sample size per light for area lights. Lights should be rendered too as objects.
+** Redesign scene management classes: body, light, object?
 
-GTrace.cpp
-    This is the main application source file.
+* Optimizations
+** Vectorization optimization: use Vector4f instead of 3f, better for vectorization!
+** Trace rays in batch! 32x32
+** Resolve whole material in one go, instead of doing each component separately.
+** Vector pass by ref or value ?? Research
 
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named GTrace.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+Bulding the project
+-------------------
+* Clone the project from git
+* Download eigen3, unpack into 3rd/eigen directory next to GTrace
+* Dowload CImg library, unpack into 3rd/CImg directory next to GTrace
+* Build in visual studio 2010

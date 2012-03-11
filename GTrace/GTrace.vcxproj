@@ -81,6 +81,7 @@
     <ClInclude Include="GCamera.h" />
     <ClInclude Include="GConstDefs.h" />
     <ClInclude Include="GGeometry.h" />
+    <ClInclude Include="GMapExpressions.h" />
     <ClInclude Include="GMaterial.h" />
     <ClInclude Include="GPLane.h" />
     <ClInclude Include="GRaytracer.h" />

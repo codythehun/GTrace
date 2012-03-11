@@ -39,7 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	m1.m_shininess = 2.0f;
 	m1.m_reflection = 0.2f;
 	m1.m_opacity = 1.0f;
-	m1.m_refraction_index = 1.33f;
+	m1.m_refraction_index = 1.2f;
 	m3 = m1;
 	m3.m_opacity = 0.0f;
 	m3.m_reflection = 1.0f;

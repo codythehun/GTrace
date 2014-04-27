@@ -49,6 +49,9 @@
     <ClInclude Include="GMapExpressions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GSurface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -70,6 +73,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GRaytracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GSurface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

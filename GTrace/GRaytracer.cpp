@@ -10,19 +10,19 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace cimg_library;
 
 const float EPSILON = 0.0001f;
+
+
 namespace gtrace
 {
+	extern template class GSurface<unsigned char>;
 
-
-	GRaytracer::GRaytracer():m_camera(new GCamera()), m_render_buffer(new CImg<unsigned char>(m_camera->GetImageWidth(), m_camera->GetImageHeight(), 1, 3)) {}
+	GRaytracer::GRaytracer():m_camera(new GCamera()), m_render_buffer(m_camera->GetImageWidth(), m_camera->GetImageHeight()) {}
 
 	GRaytracer:: ~GRaytracer()
 	{
 		if (m_camera) delete m_camera;
-		if (m_render_buffer) delete m_render_buffer;
 		
 		for_each(m_objects.begin(), m_objects.end(), [](geometry::GBody* obj) { delete obj; });
 	}
@@ -32,8 +32,7 @@ namespace gtrace
 		if ( camera == m_camera) return;
 		delete m_camera;
 		m_camera = camera;
-		delete m_render_buffer;
-		m_render_buffer = new CImg<unsigned char> (m_camera->GetImageWidth(), m_camera->GetImageHeight(), 1, 3);
+		m_render_buffer.SetDimensions(m_camera->GetImageWidth(), m_camera->GetImageHeight());
 	}
 	void GRaytracer::AddObject(geometry::GBody* object)
 	{
@@ -180,17 +179,13 @@ namespace gtrace
 			{
 				GRay ray = m_camera->GetRayForPosition(x, y);
 				col = TraceRay(ray);
-				color[0] = col[0] > 1.0f ? 255 : col[0] * 255;
-				color[1] = col[1] > 1.0f ? 255 : col[1] * 255;
-				color[2] = col[2] > 1.0f ? 255 : col[2] * 255;
-
-				m_render_buffer->draw_point(x, y, color);
+				m_render_buffer.SetPixel(x, y, GSurface<unsigned char>::Pixel(col));
 					
 			}
 
 		
 		}
-		m_render_buffer->save(file_name.c_str());
+		//m_render_buffer->save(file_name.c_str());
 	}
 			
 	void GRaytracer::AddLight(geometry::GBody* light)

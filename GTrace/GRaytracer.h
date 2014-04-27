@@ -2,10 +2,10 @@
 
 #include "GCamera.h"
 #include "GGeometry.h"
-#include <CImg/CImg.h>
 #include <list>
 #include <string>
 #include <Eigen\core>
+#include "GSurface.h"
 
 namespace gtrace
 {
@@ -43,7 +43,7 @@ namespace gtrace
 		GCamera *m_camera;
 		std::list<geometry::GBody*> m_objects;
 		std::list<geometry::GBody*> m_lights;
-		cimg_library::CImg<unsigned char> *m_render_buffer;
+		GSurface<unsigned char> m_render_buffer;
 		Options m_options;
 
 	};

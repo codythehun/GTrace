@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include <CImg/CImg.h>
 #include "GCamera.h"
 #include "GPLane.h"
 #include "GSphere.h"
@@ -11,8 +10,8 @@
 #include <iostream>
 #include "GRaytracer.h"
 #include "GMaterial.h"
+#include "GL/freeglut.h"
 
-using namespace cimg_library;
 using namespace gtrace;
 using namespace gtrace::geometry;
 using namespace gtrace::material;
@@ -23,6 +22,8 @@ const unsigned int RESOLUTION_Y = 720;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	glutInit(0, 0);
+
 	GCamera *cam = new GCamera(RESOLUTION_X, RESOLUTION_Y);
 	cam->SetOrientation(-20, 0, 10);
 	//cam->SetOrientation(5, 0, 10);

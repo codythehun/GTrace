@@ -17,6 +17,9 @@
   <ItemGroup>
     <None Include="ReadMe.txt" />
     <None Include="packages.config" />
+    <None Include="Text.scn">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
